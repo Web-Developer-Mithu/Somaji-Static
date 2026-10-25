@@ -1979,7 +1979,7 @@ body .fab, body .fa-brands {
     }
     .hero-slider-wrap {
         height: 420px !important;
-        order: 1 !important;
+        order: -1 !important;
         margin-top: 8px !important;
         border-radius: 12px !important;
     }
