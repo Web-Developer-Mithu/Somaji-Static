@@ -21,18 +21,18 @@ document.addEventListener('DOMContentLoaded', function () {
             setMenuOpen(!navMenu.classList.contains('active'));
         });
 
-        // Mobile dropdown click/tap handler
+        // Dropdown click/tap handler (Works seamlessly on Desktop click/touch & Mobile)
         const dropdownToggles = navMenu.querySelectorAll('.nav-item-dropdown > a, .nav-item-dropdown .dropdown-toggle');
         dropdownToggles.forEach(toggleBtn => {
             toggleBtn.addEventListener('click', function (e) {
-                const isMobile = window.innerWidth <= 991 || navMenu.classList.contains('active');
-                if (isMobile) {
+                if (window.innerWidth <= 991 || navMenu.classList.contains('active')) {
                     e.preventDefault();
-                    e.stopPropagation();
-                    const parent = this.closest('.nav-item-dropdown');
+                }
+                const parent = this.closest('.nav-item-dropdown');
+                if (parent) {
                     const isCurrentlyOpen = parent.classList.contains('open');
 
-                    // Close any other open dropdowns in mobile menu (accordion style)
+                    // Close any other open dropdowns
                     navMenu.querySelectorAll('.nav-item-dropdown.open').forEach(item => {
                         if (item !== parent) {
                             item.classList.remove('open', 'active');
@@ -166,23 +166,35 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    window.toggleSiteTheme = function () {
-        const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        document.body.setAttribute('data-theme', newTheme);
+    function setSiteTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        document.body.setAttribute('data-theme', theme);
         try {
-            localStorage.setItem('shomaji_theme', newTheme);
+            localStorage.setItem('shomaji_theme', theme);
         } catch (e) {
             console.error('Could not save theme preference:', e);
         }
-        updateThemeToggleUI(newTheme);
+        updateThemeToggleUI(theme);
+    }
+
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', function () {
+            const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+            setSiteTheme(currentTheme === 'dark' ? 'light' : 'dark');
+        });
+    }
+
+    window.toggleSiteTheme = function () {
+        const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        setSiteTheme(currentTheme === 'dark' ? 'light' : 'dark');
     };
 
     // Apply saved theme on DOM ready
     const savedTheme = (function() {
         try {
-            return localStorage.getItem('shomaji_theme') || 'dark';
+            const theme = localStorage.getItem('shomaji_theme');
+            return theme === 'light' || theme === 'dark' ? theme : 'dark';
         } catch(e) {
             return 'dark';
         }
@@ -191,27 +203,44 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.setAttribute('data-theme', savedTheme);
     updateThemeToggleUI(savedTheme);
 
-    // Header scroll & Back to top button
+    // Header scroll & Back to top button (Jitter-free with Hysteresis Buffer)
     const header = document.querySelector('.site-header');
     const backToTopBtn = document.querySelector('.back-to-top');
+    let isHeaderScrolled = false;
+    let isBackToTopVisible = false;
+    let scrollRafId = null;
 
-    window.addEventListener('scroll', function () {
+    function handleScrollUpdate() {
+        const currentY = window.pageYOffset || document.documentElement.scrollTop || 0;
+
+        // Hysteresis buffer: add at > 65px, remove at < 25px (no oscillation around 40px)
         if (header) {
-            if (window.scrollY > 40) {
+            if (!isHeaderScrolled && currentY > 65) {
+                isHeaderScrolled = true;
                 header.classList.add('scrolled');
-            } else {
+            } else if (isHeaderScrolled && currentY < 25) {
+                isHeaderScrolled = false;
                 header.classList.remove('scrolled');
             }
         }
 
         if (backToTopBtn) {
-            if (window.scrollY > 300) {
+            if (!isBackToTopVisible && currentY > 350) {
+                isBackToTopVisible = true;
                 backToTopBtn.classList.add('show');
-            } else {
+            } else if (isBackToTopVisible && currentY < 250) {
+                isBackToTopVisible = false;
                 backToTopBtn.classList.remove('show');
             }
         }
-    });
+        scrollRafId = null;
+    }
+
+    window.addEventListener('scroll', function () {
+        if (!scrollRafId) {
+            scrollRafId = window.requestAnimationFrame(handleScrollUpdate);
+        }
+    }, { passive: true });
 
     if (backToTopBtn) {
         backToTopBtn.addEventListener('click', function () {
@@ -345,18 +374,26 @@ document.addEventListener('DOMContentLoaded', function () {
             progressStartTime = Date.now() - (parseFloat(progressBar ? progressBar.style.width : 0) / 100 * SLIDE_DURATION);
         });
 
-        // Touch swipe support (Mobile & Tablet)
+        // Touch swipe support (Mobile & Tablet with Scroll-Safe Gesture Tracking)
         let touchStartX = 0;
+        let touchStartY = 0;
         let touchEndX = 0;
+        let touchEndY = 0;
         sliderWrap.addEventListener('touchstart', function (e) {
+            if (!e.changedTouches || e.changedTouches.length === 0) return;
             touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
         }, { passive: true });
 
         sliderWrap.addEventListener('touchend', function (e) {
+            if (!e.changedTouches || e.changedTouches.length === 0) return;
             touchEndX = e.changedTouches[0].screenX;
-            const diff = touchEndX - touchStartX;
-            if (Math.abs(diff) > 40) {
-                if (diff < 0) {
+            touchEndY = e.changedTouches[0].screenY;
+            const diffX = touchEndX - touchStartX;
+            const diffY = touchEndY - touchStartY;
+            // Only trigger horizontal slide switch if user intentionally swiped horizontally more than vertically
+            if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY) * 1.2) {
+                if (diffX < 0) {
                     nextSlide();
                 } else {
                     prevSlide();
@@ -420,4 +457,111 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    // Automatic Active Navigation Link Highlighter
+    function syncActiveNav() {
+        const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+        const currentHash = window.location.hash;
+        const navLinks = document.querySelectorAll('.nav-menu .nav-link, .nav-menu .dropdown-menu a');
+        if (!navLinks.length) return;
+
+        // If hash exists (e.g. preview mode #view-about or #view-practice-areas)
+        if (currentHash && currentHash.startsWith('#view-')) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                const parentLi = link.closest('li');
+                if (parentLi) parentLi.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-item-dropdown').forEach(dd => {
+                dd.classList.remove('active');
+                const toggle = dd.querySelector('.dropdown-toggle');
+                if (toggle) toggle.classList.remove('active');
+            });
+
+            let matched = false;
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === currentHash) {
+                    link.classList.add('active');
+                    const parentDropdown = link.closest('.nav-item-dropdown');
+                    if (parentDropdown) {
+                        parentDropdown.classList.add('active');
+                        const toggle = parentDropdown.querySelector('.dropdown-toggle');
+                        if (toggle) toggle.classList.add('active');
+                    }
+                    matched = true;
+                }
+            });
+
+            if (!matched) {
+                if (currentHash.includes('practice-area')) {
+                    const pa = document.querySelector('.nav-menu a[href="#view-practice-areas"], .nav-menu a[href*="practice-areas"]');
+                    if (pa) {
+                        pa.classList.add('active');
+                        const dd = pa.closest('.nav-item-dropdown');
+                        if (dd) dd.classList.add('active');
+                    }
+                } else if (currentHash.includes('attorney') || currentHash.includes('team')) {
+                    const team = document.querySelector('.nav-menu a[href="#view-attorneys"], .nav-menu a[href="#view-team"], .nav-menu a[href*="attorneys"]');
+                    if (team) team.classList.add('active');
+                } else if (currentHash.includes('gallery') || currentHash.includes('video') || currentHash.includes('blog')) {
+                    const dds = document.querySelectorAll('.nav-item-dropdown');
+                    if (dds[1]) {
+                        dds[1].classList.add('active');
+                        const toggle = dds[1].querySelector('.dropdown-toggle');
+                        if (toggle) toggle.classList.add('active');
+                    }
+                } else if (currentHash === '#view-about') {
+                    const ab = document.querySelector('.nav-menu a[href="#view-about"]');
+                    if (ab) ab.classList.add('active');
+                } else if (currentHash === '#view-contact') {
+                    const ct = document.querySelector('.nav-menu a[href="#view-contact"]');
+                    if (ct) ct.classList.add('active');
+                } else if (currentHash === '#view-home') {
+                    const hm = document.querySelector('.nav-menu a[href="#view-home"]');
+                    if (hm) hm.classList.add('active');
+                }
+            }
+            return;
+        }
+
+        // Multi-page Laravel matching based on URL pathname
+        let bestMatch = null;
+        let bestMatchLen = 0;
+
+        navLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (!href || href === '#' || href.startsWith('javascript:')) return;
+
+            try {
+                const linkUrl = new URL(href, window.location.origin);
+                const linkPath = linkUrl.pathname.replace(/\/+$/, '') || '/';
+
+                if (linkPath === currentPath) {
+                    bestMatch = link;
+                    bestMatchLen = 9999;
+                } else if (linkPath !== '/' && currentPath.startsWith(linkPath) && linkPath.length > bestMatchLen) {
+                    bestMatch = link;
+                    bestMatchLen = linkPath.length;
+                }
+            } catch (e) {}
+        });
+
+        if (bestMatch) {
+            navLinks.forEach(l => {
+                if (l !== bestMatch) l.classList.remove('active');
+            });
+            bestMatch.classList.add('active');
+            const parentDropdown = bestMatch.closest('.nav-item-dropdown');
+            if (parentDropdown) {
+                parentDropdown.classList.add('active');
+                const toggle = parentDropdown.querySelector('.dropdown-toggle');
+                if (toggle) toggle.classList.add('active');
+            }
+        }
+    }
+
+    syncActiveNav();
+    window.addEventListener('hashchange', syncActiveNav);
+    window.addEventListener('popstate', syncActiveNav);
 });
