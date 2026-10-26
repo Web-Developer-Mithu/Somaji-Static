@@ -1,3 +1,19 @@
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/Inter-latin.woff2') format('woff2');
+    font-style: normal;
+    font-weight: 400 800;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Noto Sans Bengali';
+    src: url('../fonts/NotoSansBengali.woff2') format('woff2');
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+}
+
 :root {
     --primary: #c5a880;
     --primary-hover: #b89362;
@@ -42,9 +58,9 @@
     --nav-link-color: #1e293b;
     --logo-text-color: #0f172a;
 
-    --font-heading: Arial, Helvetica, sans-serif;
-    --font-body: Arial, Helvetica, sans-serif;
-    --font-crest: Arial, Helvetica, sans-serif;
+    --font-heading: 'Inter', 'Noto Sans Bengali', Arial, Helvetica, sans-serif;
+    --font-body: 'Inter', 'Noto Sans Bengali', Arial, Helvetica, sans-serif;
+    --font-crest: 'Inter', 'Noto Sans Bengali', Arial, Helvetica, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

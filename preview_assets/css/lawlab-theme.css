@@ -44,10 +44,10 @@
     --logo-text-color: #ffffff !important;
 
     /* CRYSTAL-CLEAR EXECUTIVE LEGAL TYPOGRAPHY */
-    --font-heading: Arial, Helvetica, sans-serif !important;
-    --font-display: Arial, Helvetica, sans-serif !important;
-    --font-body: Arial, Helvetica, sans-serif !important;
-    --font-crest: Arial, Helvetica, sans-serif !important;
+    --font-heading: 'Inter', 'Noto Sans Bengali', Arial, Helvetica, sans-serif !important;
+    --font-display: 'Inter', 'Noto Sans Bengali', Arial, Helvetica, sans-serif !important;
+    --font-body: 'Inter', 'Noto Sans Bengali', Arial, Helvetica, sans-serif !important;
+    --font-crest: 'Inter', 'Noto Sans Bengali', Arial, Helvetica, sans-serif !important;
 }
 
 /* LAW LAB DARK THEME */
@@ -266,7 +266,7 @@ body {
 
 /* CRYSTAL-CLEAR LOGO TYPOGRAPHY */
 .site-logo-text {
-    font-family: Arial, Helvetica, sans-serif !important;
+    font-family: var(--font-heading) !important;
     font-size: 20px !important;
     font-weight: 700 !important;
     color: #ffffff !important;
@@ -275,7 +275,7 @@ body {
     text-transform: uppercase !important;
 }
 .site-logo-sub {
-    font-family: Arial, Helvetica, sans-serif !important;
+    font-family: var(--font-body) !important;
     font-size: 10px !important;
     color: #e8a412 !important;
     letter-spacing: 1.4px !important;
@@ -297,9 +297,9 @@ body {
     .nav-link {
         color: #ffffff !important;
         font-weight: 500 !important;
-        font-size: 14.5px !important;
-        letter-spacing: 0.3px !important;
-        padding: 10px 14px !important;
+        font-size: 12.5px !important;
+        letter-spacing: 0 !important;
+        padding: 10px 6px !important;
         transition: color 0.2s ease !important;
         position: relative !important;
         text-decoration: none !important;
@@ -639,7 +639,7 @@ body {
     background: linear-gradient(135deg, rgba(0,0,0,0.92) 0%, rgba(5,8,14,0.85) 60%, rgba(0,0,0,0.95) 100%) !important;
 }
 .hero-title {
-    font-family: Arial, Helvetica, sans-serif !important;
+    font-family: var(--font-display) !important;
     font-size: clamp(2rem, 2.8vw, 2.75rem) !important;
     font-weight: 700 !important;
     color: #ffffff !important;
@@ -651,7 +651,7 @@ body {
     max-width: 540px !important;
 }
 .hero-subtitle {
-    font-family: Arial, Helvetica, sans-serif !important;
+    font-family: var(--font-body) !important;
     font-size: 1.2rem !important;
     color: #e8a412 !important;
     font-weight: 600 !important;
@@ -788,7 +788,7 @@ body {
     letter-spacing: 1px !important;
 }
 .feature-title {
-    font-family: Arial, Helvetica, sans-serif !important;
+    font-family: var(--font-heading) !important;
     font-size: 1.35rem !important;
     font-weight: 700 !important;
     line-height: 1.3 !important;
@@ -817,7 +817,7 @@ body {
 }
 .section-title,
 .ally-title {
-    font-family: Arial, Helvetica, sans-serif !important;
+    font-family: var(--font-heading) !important;
     font-size: clamp(2rem, 3.2vw, 2.75rem) !important;
     font-weight: 700 !important;
     color: var(--text-primary) !important;
@@ -857,7 +857,7 @@ body {
     display: inline-block !important;
 }
 .practice-title {
-    font-family: Arial, Helvetica, sans-serif !important;
+    font-family: var(--font-heading) !important;
     font-size: 1.35rem !important;
     font-weight: 700 !important;
     color: var(--text-primary) !important;
@@ -949,7 +949,7 @@ body {
 }
 .case-title,
 .blog-title {
-    font-family: Arial, Helvetica, sans-serif !important;
+    font-family: var(--font-heading) !important;
     font-size: 1.25rem !important;
     font-weight: 700 !important;
     line-height: 1.35 !important;
@@ -997,7 +997,7 @@ body {
     padding: 22px !important;
 }
 .attorney-name {
-    font-family: Arial, Helvetica, sans-serif !important;
+    font-family: var(--font-heading) !important;
     font-size: 1.25rem !important;
     font-weight: 700 !important;
     color: var(--text-primary) !important;
@@ -1092,7 +1092,7 @@ body {
     opacity: 0.9 !important;
 }
 .lawlab-box-main {
-    font-family: Arial, Helvetica, sans-serif !important;
+    font-family: var(--font-display) !important;
     font-size: clamp(2rem, 3.2vw, 2.6rem) !important;
     font-weight: 700 !important;
     line-height: 1.15 !important;
@@ -1698,8 +1698,8 @@ body {
 
     /* Use a consistent formal font throughout the public site while preserving icon fonts. */
     body, body * {
-    font-family: Arial, Helvetica, sans-serif !important;
-}
+        font-family: var(--font-body) !important;
+    }
 body .fa, body .fa-classic, body .fas, body .far, body .fal, body .fad,
 body .fa-solid, body .fa-regular, body .fa-light, body .fa-duotone {
     font-family: "Font Awesome 6 Free" !important;
@@ -1966,28 +1966,50 @@ body .fab, body .fa-brands {
 /* RESPONSIVE & MOBILE POLISH */
 @media (max-width: 991px) {
     .hero-section {
-        padding: 40px 0 50px !important;
+        padding: 30px 0 45px !important;
     }
     .hero-grid {
-        grid-template-columns: 1fr !important;
-        gap: 28px !important;
-    }
-    .hero-content {
-        order: 0 !important;
-        text-align: left !important;
-        max-width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 22px !important;
     }
     .hero-slider-wrap {
+        order: 1 !important;
+        width: 100% !important;
         height: 420px !important;
-        order: -1 !important;
-        margin-top: 8px !important;
+        margin-top: 0 !important;
+        margin-bottom: 6px !important;
         border-radius: 12px !important;
+    }
+    .hero-content {
+        order: 2 !important;
+        text-align: left !important;
+        max-width: 100% !important;
+        width: 100% !important;
     }
 }
 
 @media (max-width: 576px) {
     .hero-section {
-        padding: 30px 0 45px !important;
+        padding: 20px 0 40px !important;
+    }
+    .hero-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 18px !important;
+    }
+    .hero-slider-wrap {
+        order: 1 !important;
+        width: 100% !important;
+        height: clamp(280px, 74vw, 340px) !important;
+        border-radius: 12px !important;
+        margin-top: 0 !important;
+        margin-bottom: 4px !important;
+        box-shadow: 0 14px 35px rgba(0, 0, 0, 0.85), 0 0 20px rgba(232, 164, 18, 0.12) !important;
+    }
+    .hero-content {
+        order: 2 !important;
+        width: 100% !important;
     }
     .hero-title {
         font-size: clamp(24px, 7vw, 32px) !important;
@@ -2043,14 +2065,6 @@ body .fab, body .fa-brands {
         font-size: 9px !important;
         letter-spacing: 0.5px !important;
         line-height: 1.25 !important;
-    }
-
-    /* Slider in mobile */
-    .hero-slider-wrap {
-        height: clamp(300px, 76vw, 350px) !important;
-        border-radius: 12px !important;
-        margin-top: 10px !important;
-        box-shadow: 0 14px 35px rgba(0, 0, 0, 0.85), 0 0 20px rgba(232, 164, 18, 0.12) !important;
     }
     .hero-slider-top-badge {
         top: 10px !important;
@@ -2566,6 +2580,17 @@ html:not([data-theme="dark"]) .head-appointments-strip {
     line-height: 1.5 !important;
 }
 
+.shomaji-biography {
+    color: var(--text-secondary);
+    font-size: 16px;
+    line-height: 1.85;
+    margin-bottom: 30px;
+}
+
+.shomaji-biography p {
+    margin: 0 0 16px;
+}
+
 .shomaji-section-title {
     font-size: 21px !important;
     font-weight: 700 !important;
@@ -3068,5 +3093,28 @@ html:not([data-theme="dark"]) .head-appointments-strip {
     .site-logo-text {
         font-size: clamp(11px, 3.2vw, 13px) !important;
         max-width: 160px !important;
+    }
+}
+
+.hero-title {
+    font-size: clamp(1rem, 2.7vw, 2.35rem) !important;
+    white-space: nowrap !important;
+    max-width: none !important;
+}
+
+.hero-subtitle {
+    font-size: clamp(0.625rem, 1.25vw, 1rem) !important;
+    letter-spacing: 0.4px !important;
+    white-space: nowrap !important;
+}
+
+@media (max-width: 991px) {
+    .hero-title {
+        font-size: clamp(1rem, 6.7vw, 2rem) !important;
+    }
+
+    .hero-subtitle {
+        font-size: clamp(0.625rem, 2.8vw, 0.85rem) !important;
+        letter-spacing: 0.2px !important;
     }
 }
